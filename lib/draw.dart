@@ -7,9 +7,11 @@ class DrawComponent extends StatefulWidget {
 
 class _DrawComponentState extends State<DrawComponent> {
   List<Path> _paths = <Path>[];
+  List<Path> _futurePaths = <Path>[];
   Path _path = new Path();
   bool _repaint = false;
   int back = 0;
+
 
   _DrawComponentState(){
     _paths = [new Path()];
@@ -17,6 +19,7 @@ class _DrawComponentState extends State<DrawComponent> {
   panDown(DragDownDetails details) {
     setState(() {
       _path = new Path();
+      _futurePaths = [];
       _paths.add(_path);
       RenderBox object = context.findRenderObject();
       Offset _localPosition = object.globalToLocal(details.globalPosition);
@@ -41,11 +44,18 @@ class _DrawComponentState extends State<DrawComponent> {
 
   backClick() {
     setState(() {
-      if (_paths.isNotEmpty) _paths.removeLast();
+      if (_paths.isNotEmpty) {
+        Path path = _paths.removeLast();
+        _futurePaths.add(path);
+      }
 
     });
   }
   forwardClick(){
+    if(_futurePaths.isNotEmpty){
+      Path path = _futurePaths.removeLast();
+      _paths.add(path);
+    }
   }
   reset(){
     setState(() {
